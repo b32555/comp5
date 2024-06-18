@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+double lagrangeInterpolation(const vector<double>& x, const vector<double>& y, double x_star) {
+    int n = x.size();
+    double result = 0.0;
+
+    for (int i = 0; i < n; ++i) {
+        double term = y[i];
+        for (int j = 0; j < n; ++j) {
+            if (j != i)
+                term *= (x_star - x[j]) / (x[i] - x[j]);
+        }
+        result += term;
+    }
+    return result;
+}
+
+double factorial(int n) {
+    double result = 1.0;
+    for (int i = 1; i <= n; ++i) {
+        result *= i;
+    }
+    return result;
+}
+
+double computeError(const vector<double>& x, double x_star) {
+    int n = x.size();
+    double error = 1.0;
+    for (int i = 0; i < n; ++i) {
+        error *= (x_star - x[i]);
+    }
+    double max_f_n_plus_1 = 1.0; // Assuming the maximum value of the (n+1)th derivative of the function is 1 for simplicity
+    error *= max_f_n_plus_1 / factorial(n+1);
+    return fabs(error);
+}
+
+int main() {
+    vector<double> x = {0.1*M_PI, 0.2*M_PI, 0.3*M_PI, 0.4*M_PI};
+    vector<double> y;
+    for (double xi : x) {
+        y.push_back(sin(xi));
+    }
+
+    double x_star = 0.25 * M_PI;
+    double interpolated_value = lagrangeInterpolation(x, y, x_star);
+    double actual_value = sin(x_star);
+    double error = computeError(x, x_star);
+
+    cout << "Interpolated value at x* = " << x_star << ": " << interpolated_value << endl;
+    cout << "Actual value at x* = " << actual_value << endl;
+    cout << "Error in interpolation: " << error << endl;
+
+    return 0;
+}
