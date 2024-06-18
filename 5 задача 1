@@ -1,0 +1,30 @@
+import numpy as np
+
+# Given data points
+x = np.array([-1.0, 0.0, 1.0, 2.0, 3.0])
+y = np.array([-0.5, 0.0, 0.86603, 3.0, 2.0])
+
+def finite_diff(x, y):
+    n = len(x)
+    dydx = np.zeros(n)
+    d2ydx2 = np.zeros(n)
+
+    for i in range(1, n-1):
+        dydx[i] = (y[i+1] - y[i-1]) / (x[i+1] - x[i-1])
+        d2ydx2[i] = (y[i+1] - 2*y[i] + y[i-1]) / ((x[i+1] - x[i]) * (x[i] - x[i-1]))
+
+    # Handle endpoints separately if needed
+    dydx[0] = (y[1] - y[0]) / (x[1] - x[0])
+    d2ydx2[0] = (y[2] - 2*y[1] + y[0]) / ((x[2] - x[1]) * (x[1] - x[0]))
+    dydx[-1] = (y[-1] - y[-2]) / (x[-1] - x[-2])
+    d2ydx2[-1] = (y[-1] - 2*y[-2] + y[-3]) / ((x[-1] - x[-2]) * (x[-2] - x[-3]))
+
+    return dydx, d2ydx2
+
+dydx, d2ydx2 = finite_diff(x, y)
+x_point = 1.0
+
+# Find the index of the point 1.0
+index = np.where(x == x_point)[0][0]
+print(f"First derivative at x = {x_point}: {dydx[index]}")
+print(f"Second derivative at x = {x_point}: {d2ydx2[index]}")
